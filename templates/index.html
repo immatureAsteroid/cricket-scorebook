@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Cricket Scorebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EDE8DC;
+    --surface: #F5F1E8;
+    --surface2: #E8E2D4;
+    --border: #C8BFA8;
+    --text: #1C1C1C;
+    --text2: #4A4438;
+    --text3: #7A7060;
+    --green: #2D5016;
+    --green2: #3D6B20;
+    --green-light: #EBF2E5;
+    --gold: #C9A227;
+    --gold2: #A8841E;
+    --red: #B03030;
+    --white: #FDFAF4;
+    --shadow: 0 2px 16px rgba(44,36,20,0.10);
+    --shadow-lg: 0 8px 40px rgba(44,36,20,0.16);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; }
+
+  /* ── Landing Page ── */
+  .landing {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+  .landing::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(45,80,22,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .landing::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -60px;
+    width: 250px; height: 250px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,162,39,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .logo-area { text-align: center; margin-bottom: 36px; }
+  .logo-icon {
+    font-size: 64px;
+    display: block;
+    margin-bottom: 12px;
+    animation: bounceIn 0.6s ease;
+  }
+  @keyframes bounceIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .logo-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--green);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  .logo-sub {
+    font-size: 13px;
+    color: var(--text3);
+    margin-top: 6px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    padding: 32px 24px;
+    width: 100%;
+    max-width: 380px;
+    animation: slideUp 0.5s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--green);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .choice-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 12px;
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    gap: 8px;
+    text-decoration: none;
+  }
+  .choice-btn:hover, .choice-btn:active {
+    border-color: var(--green);
+    background: var(--green-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+  .choice-btn .icon { font-size: 32px; }
+  .choice-btn .label { font-size: 13px; font-weight: 600; color: var(--text); }
+  .choice-btn .desc { font-size: 11px; color: var(--text3); text-align: center; }
+  .choice-btn.primary { border-color: var(--green); background: var(--green-light); }
+
+  .divider { display: flex; align-items: center; gap: 10px; margin: 16px 0; }
+  .divider span { color: var(--text3); font-size: 12px; white-space: nowrap; }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* Google Button */
+  .google-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; padding: 14px 20px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    transition: all 0.2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .google-btn:hover { box-shadow: var(--shadow); transform: translateY(-1px); border-color: #4285F4; }
+  .google-btn svg { width: 20px; height: 20px; }
+
+  /* User Bar */
+  .user-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    background: var(--green-light);
+    border-radius: 12px;
+    border: 1px solid var(--green);
+    margin-bottom: 16px;
+  }
+  .user-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 15px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user-info { flex: 1; min-width: 0; }
+  .user-name { font-weight: 600; font-size: 14px; color: var(--green); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-email { font-size: 11px; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .logout-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--text3); font-size: 18px; padding: 4px;
+    flex-shrink: 0;
+  }
+
+  .start-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .start-btn:hover { background: var(--green2); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .start-btn:active { transform: translateY(0); }
+
+  .history-link {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--text3);
+  }
+  .history-link a { color: var(--green); font-weight: 600; text-decoration: none; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--text); color: white;
+    padding: 10px 20px; border-radius: 8px;
+    font-size: 13px; z-index: 9999;
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+
+  /* History Modal */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    display: none;
+    align-items: flex-end;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 24px 24px 0 0;
+    width: 100%; max-width: 480px;
+    margin: 0 auto;
+    padding: 24px 20px;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: slideUpModal 0.3s ease;
+  }
+  @keyframes slideUpModal {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .modal-handle {
+    width: 36px; height: 4px; background: var(--border);
+    border-radius: 2px; margin: 0 auto 20px;
+  }
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; color: var(--green);
+    margin-bottom: 16px;
+  }
+  .day-section { margin-bottom: 20px; }
+  .day-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .day-label { font-weight: 700; font-size: 14px; color: var(--text); }
+  .day-dl-btn {
+    font-size: 12px; color: var(--green); font-weight: 600;
+    background: none; border: none; cursor: pointer; padding: 4px 8px;
+    border-radius: 6px; background: var(--green-light);
+  }
+  .match-item {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+    border: 1px solid var(--border);
+  }
+  .match-teams { font-weight: 600; font-size: 13px; color: var(--text); }
+  .match-result { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .match-dl { background: var(--green); color: white; border: none; border-radius: 8px;
+               padding: 6px 12px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="landing" id="landingPage">
+  <div class="logo-area">
+    <span class="logo-icon">🏏</span>
+    <h1 class="logo-title">Cricket<br>Scorebook</h1>
+    <p class="logo-sub">Ball by Ball Scoring</p>
+  </div>
+
+  <div class="card">
+    <!-- Logged in user bar -->
+    <div class="user-bar" id="userBar" style="display:none">
+      <div class="user-avatar" id="userAvatar"></div>
+      <div class="user-info">
+        <div class="user-name" id="userName"></div>
+        <div class="user-email" id="userEmail"></div>
+      </div>
+      <button class="logout-btn" onclick="logout()" title="Logout">✕</button>
+    </div>
+
+    <p class="card-title">Start Scoring</p>
+
+    <div class="choice-grid">
+      <button class="choice-btn primary" onclick="startDirect()">
+        <span class="icon">⚡</span>
+        <span class="label">Direct</span>
+        <span class="desc">No login needed</span>
+      </button>
+      <div id="loginChoiceArea">
+        <button class="choice-btn" onclick="openGoogleLogin()" id="loginChoiceBtn" style="height:100%;width:100%">
+          <span class="icon">🔐</span>
+          <span class="label">Login</span>
+          <span class="desc">Save history</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Google sign-in (shown when login chosen) -->
+    <div id="googleSignInArea" style="display:none">
+      <div class="divider"><span>Sign in with</span></div>
+      <button class="google-btn" onclick="signInWithGoogle()">
+        <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+      <div style="text-align:center;margin-top:10px">
+        <button style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer" onclick="closeGoogleLogin()">← Back</button>
+      </div>
+    </div>
+
+    <!-- Logged in: Start with account -->
+    <div id="loggedInActions" style="display:none">
+      <button class="start-btn" onclick="startWithLogin()">▶ Start New Match</button>
+      <div class="history-link">
+        <a href="#" onclick="openHistory();return false">📋 View Match History</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- History Modal -->
+<div class="modal-overlay" id="historyModal" onclick="closeHistory(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <p class="modal-title">📋 Match History</p>
+    <div id="historyContent">Loading...</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Google Identity Services (real OAuth) -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+let currentUser = null;
+const GOOGLE_CLIENT_ID = '910491326115-2sac76ii0mu6mgbjdl47l7s0l65642jk.apps.googleusercontent.com';
+// ─── Init ─────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  // Check auth status
+  const res = await fetch('/auth/status');
+  const data = await res.json();
+  if (data.logged_in) {
+    currentUser = data;
+    showLoggedInState();
+  }
+
+  // Also check for saved direct session
+  const saved = sessionStorage.getItem('directSession');
+  if (saved && !data.logged_in) {
+    // Has an ongoing direct match - offer to resume
+    showDirectResume();
+  }
+});
+
+function showLoggedInState() {
+  document.getElementById('userBar').style.display = 'flex';
+  document.getElementById('loggedInActions').style.display = 'block';
+  document.getElementById('loginChoiceArea').style.display = 'none';
+  document.getElementById('googleSignInArea').style.display = 'none';
+
+  document.getElementById('userName').textContent = currentUser.name;
+  document.getElementById('userEmail').textContent = currentUser.email;
+  const avatar = document.getElementById('userAvatar');
+  if (currentUser.picture) {
+    avatar.innerHTML = `<img src="${currentUser.picture}" alt="">`;
+  } else {
+    avatar.textContent = currentUser.name[0];
+  }
+}
+
+function showDirectResume() {
+  // Modify start direct button to show resume option
+  const btn = document.querySelector('.choice-btn.primary');
+  btn.querySelector('.desc').textContent = 'Tap to resume';
+}
+
+function startDirect() {
+  sessionStorage.setItem('scoringMode', 'direct');
+  window.location.href = '/score';
+}
+
+function startWithLogin() {
+  sessionStorage.setItem('scoringMode', 'login');
+  window.location.href = '/score';
+}
+
+function openGoogleLogin() {
+  document.getElementById('loginChoiceArea').style.display = 'none';
+  document.querySelector('.choice-grid').style.display = 'none';
+  document.getElementById('googleSignInArea').style.display = 'block';
+  document.querySelector('.card-title').style.display = 'none';
+
+  // Initialize Google Sign-In if client ID is set
+  if (GOOGLE_CLIENT_ID) {
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleResponse
+    });
+    google.accounts.id.renderButton(
+      document.getElementById('googleSignInArea'),
+      { theme: 'outline', size: 'large', width: '100%' }
+    );
+  }
+}
+
+function closeGoogleLogin() {
+  document.getElementById('loginChoiceArea').style.display = 'block';
+  document.querySelector('.choice-grid').style.display = 'grid';
+  document.getElementById('googleSignInArea').style.display = 'none';
+  document.querySelector('.card-title').style.display = 'block';
+}
+
+async function signInWithGoogle() {
+  // Production: use Google Identity Services
+  // Dev: mock login
+  if (!GOOGLE_CLIENT_ID) {
+    await mockLogin();
+    return;
+  }
+  google.accounts.id.prompt();
+}
+
+async function handleGoogleResponse(response) {
+  // Decode JWT and send to backend
+  const payload = JSON.parse(atob(response.credential.split('.')[1]));
+  const res = await fetch('/auth/google/mock', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json();
+  if (data.success) {
+    currentUser = data;
+    showLoggedInState();
+    showToast('Signed in as ' + data.name);
+  }
+}
+
+async function mockLogin() {
+  // Mock for development
+  const res = await fetch('/auth/google/mock', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      sub: 'mock_user_001',
+      email: 'player@cricket.app',
+      name: 'Cricket Player',
+      picture: ''
+    })
+  });
+  const data = await res.json();
+  if (data.success) {
+    currentUser = {name: data.name, email: data.email, picture: data.picture};
+    showLoggedInState();
+    showToast('Signed in (Dev Mode)');
+  }
+}
+
+async function logout() {
+  await fetch('/auth/logout', {method:'POST'});
+  currentUser = null;
+  document.getElementById('userBar').style.display = 'none';
+  document.getElementById('loggedInActions').style.display = 'none';
+  document.getElementById('loginChoiceArea').style.display = 'block';
+  document.querySelector('.choice-grid').style.display = 'grid';
+  document.querySelector('.card-title').style.display = 'block';
+  showToast('Signed out');
+}
+
+// ─── History ──────────────────────────────────────────────────────────────────
+async function openHistory() {
+  document.getElementById('historyModal').classList.add('open');
+  await loadHistory();
+}
+
+function closeHistory(e) {
+  if (e.target === document.getElementById('historyModal')) {
+    document.getElementById('historyModal').classList.remove('open');
+  }
+}
+
+async function loadHistory() {
+  const el = document.getElementById('historyContent');
+  el.innerHTML = '<p style="color:var(--text3);text-align:center;padding:20px">Loading...</p>';
+
+  const res = await fetch('/api/matches/history');
+  const data = await res.json();
+  const matches = data.matches;
+
+  if (!matches || Object.keys(matches).length === 0) {
+    el.innerHTML = '<p style="color:var(--text3);text-align:center;padding:20px">No matches yet</p>';
+    return;
+  }
+
+  let html = '';
+  for (const [date, list] of Object.entries(matches).sort().reverse()) {
+    const dateKey = date.replace(/\//g,'-');
+    html += `<div class="day-section">
+      <div class="day-header">
+        <span class="day-label">📅 ${date}</span>
+        <button class="day-dl-btn" onclick="downloadDay('${dateKey}')">⬇ All PDF</button>
+      </div>`;
+    for (const m of list) {
+      html += `<div class="match-item">
+        <div>
+          <div class="match-teams">${m.team1} vs ${m.team2}</div>
+          <div class="match-result">${m.result || m.status}</div>
+        </div>
+        <button class="match-dl" onclick="downloadMatchPDF('${m.id}')">⬇ PDF</button>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+async function downloadMatchPDF(id) {
+  window.open(`/api/match/${id}/pdf`, '_blank');
+}
+
+async function downloadDay(dateStr) {
+  window.open(`/api/matches/day/${dateStr}/pdf`, '_blank');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
